@@ -1,0 +1,18 @@
+{
+    "name": "ilgner.nascimento/backend",
+    "authors": [
+        {
+            "name": "Ilgner",
+            "email": "ilgnersilva@outlook.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "app\\": "app"
+        }
+    },
+    "require": {
+        "firebase/php-jwt": "^6.0",
+        "vlucas/phpdotenv": "^4.2"
+    }
+}

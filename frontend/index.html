@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - JWT</title>
+</head>
+<body>
+    <style>
+        .flex{
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .form{
+            display: flex;
+        }
+    </style>
+    <div class="flex">
+        <div class="form">
+            <form id="formulario" action="">
+                <input type="email" name="email" value="ilgnersilva@outlook.com">
+                <input type="password" name="password" value="1" >
+                <input type="submit" value="Entrar">
+            </form>
+            <div class="verify">
+                <button>Verificar</button>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js" integrity="sha512-odNmoc1XJy5x1TMVMdC7EMs3IVdItLPlCeL5vSUPN2llYKMJ2eByTTAIiiuqLg+GdNr9hF6z81p27DArRFKT7A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+        axios.defaults.baseURL = "http://localhost:3000";
+        document.querySelector("#formulario")
+            .addEventListener('submit', async (e)=>{
+                e.preventDefault();
+                
+                try{
+                    const formData = new FormData(e.target);
+                    const {data} = await axios.post('login.php', formData);
+                    sessionStorage.setItem('session',data);
+                }catch(err){
+                    console.log(err)
+                }
+        })
+
+        document.querySelector(".verify").addEventListener('click', async()=>{
+            try{
+                const authSession = 'Bearer'+sessionStorage.getItem('session');
+                const {data} = await axios.get('auth.php', {
+                    headers: {
+                        "Authorization": authSession
+                    }
+                });
+            }catch(err){
+
+            }
+        })
+    </script>
+</body>
+</html>
