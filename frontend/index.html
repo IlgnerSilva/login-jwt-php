@@ -42,22 +42,24 @@
                 try{
                     const formData = new FormData(e.target);
                     const {data} = await axios.post('login.php', formData);
+                    console.log(data);
                     sessionStorage.setItem('session',data);
                 }catch(err){
-                    console.log(err)
+                    console.log(err);
                 }
         })
 
         document.querySelector(".verify").addEventListener('click', async()=>{
             try{
-                const authSession = 'Bearer'+sessionStorage.getItem('session');
+                const authSession = 'Bearer '+sessionStorage.getItem('session');
                 const {data} = await axios.get('auth.php', {
                     headers: {
                         "Authorization": authSession
                     }
                 });
+                console.log(data);
             }catch(err){
-
+                console.log(data);
             }
         })
     </script>

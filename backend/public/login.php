@@ -5,7 +5,6 @@
     define("FileName", "login.php");
     include_once(RelativePath . "/config/Common.php");
     use Firebase\JWT\JWT;
-    use Firebase\JWT\Key;
 
     header("Access-Control-Allow-Origin: *");
 
@@ -13,31 +12,33 @@
     $dotenv->load();
     
     $email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);  
+    $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_STRING);
     
-    $db = new clsDBConnection1();
-    $sql = "SELECT id, name, email_verify, password FROM users WHERE email_verify = '" . $email . "'";
-    $db->query($sql);
-    if($db->next_record()) {
-        if(md5($password) == $db->f("password")){
-            // $teste = array( 'id' => $db->f("id"), 'email' => $db->f("email_verify"), 'name' => $db->f("name"), 'email_enviado' => $email, 'senha' => $db->f('password'));
-            // echo json_encode($teste);
-            $db->close();
+    try{
+        $db = new clsDBConnection1();
+        $sql = "SELECT id, name, email_verify, password FROM users WHERE email_verify = '" . $email . "'";
+        $db->query($sql);
+        if($db->next_record()) {
+            if(md5($password) == $db->f("password")){
+                $payload = [
+                    "exp" => time() + 10,
+                    "iat" => time(),
+                    "email" => $email
+                ];
+                $encode = JWT::encode($payload, $_ENV['KEY'], 'HS256');
+                echo json_encode($encode);
+                $db->close();
+                // $teste = array( 'id' => $db->f("id"), 'email' => $db->f("email_verify"), 'name' => $db->f("name"), 'email_enviado' => $email, 'senha' => $db->f('password'));
+                // echo json_encode($teste);
+            }else{
+                http_response_code(401);
+                $db->close();
+            }
         }else{
             http_response_code(401);
             $db->close();
         }
-    }else{
-        http_response_code(401);
-        $db->close();
+    }catch(Throwable $err){
+        echo ($err->getMessage());
     }
-
-    $payload = [
-        "exp" => time() + 10,
-        "iat" => time(),
-        "email" => $email
-    ];
     
-
-    $encode = JWT::encode($payload, $_ENV['KEY'], 'HS256');
-    echo json_encode($encode);
